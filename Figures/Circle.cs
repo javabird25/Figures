@@ -2,18 +2,16 @@
 
 public class Circle : Figure
 {
-    public double Radius { get; set; }
+    public double Radius { get; }
 
+    /// <exception cref="InvalidFigurePropertyValueException">radius is negative.</exception>
     public Circle(double radius)
     {
         Radius = radius;
+        Validate();
     }
 
-    public override double Area()
-    {
-        Validate();
-        return double.Pi * double.Pow(Radius, 2);
-    }
+    public override double GetArea() => double.Pi * double.Pow(Radius, 2);
 
     public override void Validate()
     {
