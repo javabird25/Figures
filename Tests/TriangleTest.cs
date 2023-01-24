@@ -8,37 +8,44 @@ public sealed class TriangleTest
     public void TriangleWithSides_3_4_5_HasAreaOf_6()
     {
         var triangle = new Triangle(3, 4, 5);
-        var area = triangle.Area;
+        var area = triangle.Area();
         area.Should().Be(6);
     }
 
     [Fact]
-    public void TriangleWithNegativeSidesCannotBeCreated()
+    public void TriangleWithNegativeSidesIsInvalid()
     {
-        var action = () => new Triangle(-1, 1, 1);
-        action.Should().Throw<InvalidFigurePropertyValueException>();
+        var triangle = new Triangle(-1, 1, 1);
+        triangle.IsValid().Should().BeFalse();
     }
 
     [Fact]
-    public void NegativeSidesCannotBeSet()
+    public void TriangleWithInvalidSideCombinationIsInvalid()
     {
-        var triangle = new Triangle(2, 3, 4);
-        var action = () => { triangle.SideALenght = -1; };
-        action.Should().Throw<InvalidFigurePropertyValueException>();
+        var triangle = new Triangle(2, 3, 100);
+        triangle.IsValid().Should().BeFalse();
     }
 
     [Fact]
-    public void TriangleWithInvalidSideCombinationCannotBeCreated()
+    public void AreaMethodThrowsIfTriangleIsInvalid()
     {
-        var triangle = new Triangle(2, 3, 4);
-        var action = () => { triangle.SideCLength = 100; };
-        action.Should().Throw<InvalidTriangleSideCombinationException>();
+        var triangle = new Triangle(-1, -1, -1);
+        var action = () => triangle.Area();
+        action.Should().Throw<GeometryException>();
     }
-    
+
+    [Fact]
+    public void IsRightMethodThrowsIfTriangleIsInvalid()
+    {
+        var triangle = new Triangle(-1, -1, -1);
+        var action = () => triangle.IsRight();
+        action.Should().Throw<GeometryException>();
+    }
+
     [Fact]
     public void TriangleWithSides_3_4_5_IsRight()
     {
         var triangle = new Triangle(3, 4, 5);
-        triangle.IsRight.Should().BeTrue();
+        triangle.IsRight().Should().BeTrue();
     }
 }

@@ -1,90 +1,49 @@
 namespace Figures;
 
-public class Triangle : IFigure
+public class Triangle : Figure
 {
-    private double _sideALenght;
-    private double _sideBLength;
-    private double _sideCLength;
-    private readonly bool _shouldValidateSideCombination;
+    public double SideALength { get; set; }
 
-    public double SideALenght
+    public double SideBLength { get; set; }
+
+    public double SideCLength { get; set; }
+
+    public Triangle(double sideALength, double sideBLength, double sideCLength)
     {
-        get => _sideALenght;
-        set => SetSideLength('A', ref _sideALenght, value);
+        SideALength = sideALength;
+        SideBLength = sideBLength;
+        SideCLength = sideCLength;
     }
 
-    public double SideBLength
+    public override double Area()
     {
-        get => _sideBLength;
-        set => SetSideLength('B', ref _sideBLength, value);
-    }
-
-    public double SideCLength
-    {
-        get => _sideCLength;
-        set => SetSideLength('C', ref _sideCLength, value);
-    }
-
-    public double Area
-    {
-        get
-        {
-            var s = (SideALenght + SideBLength + SideCLength) / 2;
-            return double.Sqrt(s * (s - SideALenght) * (s - SideBLength) * (s - SideCLength));
-        }
+        Validate();
+        var s = (SideALength + SideBLength + SideCLength) / 2;
+        return double.Sqrt(s * (s - SideALength) * (s - SideBLength) * (s - SideCLength));
     }
 
     /// <summary>
     ///     Indicates if this triangle is right (one of the angles is 90°).
     /// </summary>
-    public bool IsRight
+    /// <exception cref="GeometryException">triangle is invalid.</exception>
+    public bool IsRight()
     {
-        get
-        {
-            var sortedSideLengths = new[] { SideALenght, SideBLength, SideCLength }.Order().ToArray();
-            var other1 = sortedSideLengths[0];
-            var other2 = sortedSideLengths[1];
-            var longest = sortedSideLengths.Last();
-            return double.Pow(other1, 2) + double.Pow(other2, 2) == double.Pow(longest, 2);
-        }
+        Validate();
+        var sortedSideLengths = new[] { SideALength, SideBLength, SideCLength }.Order().ToArray();
+        var other1 = sortedSideLengths[0];
+        var other2 = sortedSideLengths[1];
+        var longest = sortedSideLengths.Last();
+        return double.Pow(other1, 2) + double.Pow(other2, 2) == double.Pow(longest, 2);
     }
 
-    public Triangle(double sideALenght, double sideBLength, double sideCLength)
+    public override void Validate()
     {
-        SideALenght = sideALenght;
-        SideBLength = sideBLength;
-        SideCLength = sideCLength;
-        _shouldValidateSideCombination = true;
-    }
-
-    private void SetSideLength(char side, ref double length, double newLength)
-    {
-        ValidateSideLengthToBePositive(side, newLength);
-        var oldLength = length;
-        try
-        {
-            length = newLength;
-            if (_shouldValidateSideCombination)
-                ValidateSideCombination();
-        }
-        catch (InvalidTriangleSideCombinationException)
-        {
-            length = oldLength;
-            throw;
-        }
-    }
-
-    private void ValidateSideLengthToBePositive(char side, double length)
-    {
-        if (length < 0)
+        if (SideALength < 0 || SideBLength < 0 || SideCLength < 0)
             throw new InvalidFigurePropertyValueException(
-                $"Triangle side {side} cannot be negative, received: {length}");
-    }
+                $"Triangle sides cannot be negative, have: {SideALength} {SideBLength} {SideCLength}");
 
-    private void ValidateSideCombination()
-    {
-        if (SideALenght + SideBLength <= SideCLength || SideALenght + SideCLength <= SideBLength ||
-            SideBLength + SideCLength <= SideALenght)
-            throw new InvalidTriangleSideCombinationException(SideALenght, SideBLength, SideCLength);
+        if (SideALength + SideBLength <= SideCLength || SideALength + SideCLength <= SideBLength ||
+            SideBLength + SideCLength <= SideALength)
+            throw new InvalidTriangleSideCombinationException(SideALength, SideBLength, SideCLength);
     }
 }
