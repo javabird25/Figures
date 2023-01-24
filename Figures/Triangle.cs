@@ -1,6 +1,6 @@
 namespace Figures;
 
-public class Triangle : Figure
+public sealed class Triangle : Figure
 {
     public double SideA { get; }
     public double SideB { get; }

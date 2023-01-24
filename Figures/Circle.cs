@@ -1,6 +1,6 @@
 ﻿namespace Figures;
 
-public class Circle : Figure
+public sealed class Circle : Figure
 {
     public double Radius { get; }
 
